@@ -78,10 +78,33 @@ Polynomial multiplyPolynomials(const Polynomial *multiplicand, const Polynomial 
     return product;
 }
 
-Polynomial dividePolynomials(const Polynomial *dividend, const Polynomial *divisor) {
-    if (divisor->degree == 0 && divisor->terms[0].coefficient = 0.0) {
+Polynomial *dividePolynomials(const Polynomial *dividend, const Polynomial *divisor) {
+    if (divisor->degree == 0 && divisor->terms[0].coefficient == 0.0) {
         fprintf(stderr, "ERROR IN DIVISION: INVALID DIVISOR");
         exit(EXIT_FAILURE);
     }
-    Polynomial quotient;
+    Polynomial quotient, remainder;
+    int maxDegree = dividend->degree - divisor->degree;
+    initializePolynomial(&quotient, maxDegree);
+    copyPolynomial(dividend, &remainder);
+
+    for (int i = dividend->degree; i >= divisor->degree; i--) {
+        double coefficient_1 = divisor->terms[divisor->degree].coefficient;
+        double coefficient_2 = remainder.terms[i].coefficient;
+        setCoefficient(&quotient, i - divisor->degree, coefficient_1 / coefficient_2);
+
+        for (int j = 0; j <= divisor->degree; j++) {
+            remainder.terms[i - j].coefficient -= coefficient_2 * divisor->terms[j].coefficient;
+        }
+    }
+
+    Polynomial *result = (Polynomial*)malloc(sizeof(Polynomial) * 2);
+    if (result == NULL) {
+        fprintf(stderr, "ERROR IN DIVISION: MEMORY ALLOCATION FAILURE");
+        exit(EXIT_FAILURE);
+    }
+
+    result[0] = quotient;
+    result[1] = remainder;
+    return result;
 }
