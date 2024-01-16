@@ -1,0 +1,117 @@
+Add same # degree and same # term
+    int main() {
+        Polynomial addend_1, addend_2, sum;
+
+        initializePolynomial(&addend_1, 2);
+        setCoefficient(&addend_1, 2, 2.0);
+        setCoefficient(&addend_1, 1, -1.0);
+        setCoefficient(&addend_1, 0, 0.3);
+
+        initializePolynomial(&addend_2, 2);
+        setCoefficient(&addend_2, 2, 2.0);
+        setCoefficient(&addend_2, 1, 4.3);
+        setCoefficient(&addend_2, 0, 0.69);
+
+        sum = addPolynomials(&addend_1, &addend_2);
+
+        assert(sum.degree == 2);
+        assert(sum.terms[2].coefficient == 4.0);
+        assert(sum.terms[1].coefficient == 3.3);
+        assert(sum.terms[0].coefficient == 0.99);
+
+        free(addend_1.terms);
+        free(addend_2.terms);
+        free(sum.terms);
+
+        printf("Test addPolynomials passed!\n");
+        return 0;
+    }
+
+Add same # degree and diff # term
+    int main() {
+        Polynomial addend_1, addend_2, sum;
+
+        initializePolynomial(&addend_1, 2);
+        setCoefficient(&addend_1, 2, 2.0);
+        setCoefficient(&addend_1, 1, -1.0);
+        setCoefficient(&addend_1, 0, 0.3);
+
+        initializePolynomial(&addend_2, 2);
+        setCoefficient(&addend_2, 2, 2.0);
+        setCoefficient(&addend_2, 0, 0.69);
+
+        sum = addPolynomials(&addend_1, &addend_2);
+
+        assert(sum.degree == 2);
+        assert(sum.terms[2].coefficient == 4.0);
+        assert(sum.terms[1].coefficient == -1.0);
+        assert(sum.terms[0].coefficient == 0.99);
+
+        free(addend_1.terms);
+        free(addend_2.terms);
+        free(sum.terms);
+
+        printf("Test addPolynomials passed!\n");
+        return 0;
+    }
+
+Add diff # degree and same # term
+    int main() {
+        Polynomial addend_1, addend_2, sum;
+
+        initializePolynomial(&addend_1, 3);
+        setCoefficient(&addend_1, 3, 3.43);
+        setCoefficient(&addend_1, 2, 2.0);
+        setCoefficient(&addend_1, 1, -1.0);
+        setCoefficient(&addend_1, 0, 0.3);
+
+        initializePolynomial(&addend_2, 2);
+        setCoefficient(&addend_2, 2, 2.0);
+        setCoefficient(&addend_2, 1, 4.3);
+        setCoefficient(&addend_2, 0, 0.69);
+
+        sum = addPolynomials(&addend_1, &addend_2);
+
+        assert(sum.degree == 3);
+        assert(sum.terms[3].coefficient == 3.43);
+        assert(sum.terms[2].coefficient == 4.0);
+        assert(sum.terms[1].coefficient == 3.3);
+        assert(sum.terms[0].coefficient == 0.99);
+
+        free(addend_1.terms);
+        free(addend_2.terms);
+        free(sum.terms);
+
+        printf("Test addPolynomials passed!\n");
+        return 0;
+    }
+
+Add diff # degree and diff # term
+    int main() {
+        Polynomial addend_1, addend_2, sum;
+
+        initializePolynomial(&addend_1, 3);
+        setCoefficient(&addend_1, 3, 3.43);
+        setCoefficient(&addend_1, 2, 2.0);
+        setCoefficient(&addend_1, 1, -1.0);
+        setCoefficient(&addend_1, 0, 0.3);
+
+        initializePolynomial(&addend_2, 2);
+        setCoefficient(&addend_2, 2, 2.0);
+        setCoefficient(&addend_2, 0, 0.69);
+
+        sum = addPolynomials(&addend_1, &addend_2);
+
+        assert(sum.degree == 3);
+        assert(sum.terms[3].coefficient == 3.43);
+        assert(sum.terms[2].coefficient == 4.0);
+        assert(sum.terms[1].coefficient == -1.0);
+        assert(sum.terms[0].coefficient == 0.99);
+
+        free(addend_1.terms);
+        free(addend_2.terms);
+        free(sum.terms);
+
+        printf("Test addPolynomials passed!\n");
+        return 0;
+    }

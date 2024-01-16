@@ -1,4 +1,4 @@
-#include "polynomial.h"
+#include "../include/polynomial.h"
 
 void initializePolynomial(Polynomial *polynomial, int degree) {
     if (degree < 0) {
@@ -27,7 +27,7 @@ void setCoefficient(Polynomial *polynomial, int exponent, double coefficient) {
     polynomial->terms[exponent].coefficient = coefficient;
 }
 
-void copyCoefficient(const Polynomial *source, Polynomial *destination) {
+void copyPolynomial(const Polynomial *source, Polynomial *destination) {
     initializePolynomial(destination, source->degree);
     for (int i = 0; i < source->degree; i++) {
         setCoefficient(destination, i, source->terms[i].coefficient);

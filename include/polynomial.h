@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-// Polynomial.c
 typedef struct {
     double coefficient;
     int exponent;
