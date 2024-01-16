@@ -1,78 +1,91 @@
-# Makefile
+CPU := $(shell uname -p)
+ifeq ($(CPU),arm)
+export LD_LIBRARY_PATH=/opt/homebrew/lib/:$$LD_LIBRARY_PATH
+INCD = -I /opt/homebrew/include/
+LIBD = -L /opt/homebrew/lib/
+endif
 
-# Compiler
 CC := gcc
+SRCD := polynomial
+TSTD := $(SRCD)/test
+BLDD := build
+BIND := bin
+INCD += -I include
 
-# Compilation flags
+ALL_SRCF := $(shell find $(SRCD) -type f -name '*.c')
+ALL_OBJF := $(patsubst $(SRCD)/%,$(BLDD)/%,$(ALL_SRCF:.c=.o))
+FUNC_FILES := $(filter-out $(BLDD)/test_polynomial.o, $(ALL_OBJF))
+TEST_SRC := $(shell find $(TSTD) -type f -name '*.c')
+TEST_OBJ := $(patsubst $(SRCD)/%,$(BLDD)/%,$(TEST_SRC:.c=.o))
+
+MAIN := $(BIND)/polynomial
+TEST := $(BIND)/test_polynomial
+
+CRITERION_DIR := criterion-2.4.1
+CRITERION_LIB := $(CRITERION_DIR)/lib/libcriterion.so
+CRITERION_INC := $(CRITERION_DIR)/include
+
 CFLAGS := -Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wundef -pedantic
 GCOV := -fprofile-arcs -ftest-coverage
 DFLAGS := -g -DDEBUG
 PRINT_STATEMENTS := -DERROR -DSUCCESS -DWARN -DINFO
 
-# Standard
 STD := -std=gnu11
+TEST_LIB := -lcriterion
 LIBS := -lm
 
-# Additional paths
-INCD := -I include
-LIBD := -L /path/to/criterion/lib   # Replace with the actual path to your Criterion library
-
-# Additional flags
 CFLAGS += $(STD)
 CFLAGS += $(GCOV)
 CFLAGS += $(DFLAGS)
 
-# Directories
-SRCD := src
-TSTD := tests
-AUXD := tests_aux
-BLDD := build
-BIND := bin
+TEST_RESULTS := "test_results.json"
+OCLINT_REPORT := "oclint_report.html"
+GCOV_REPORT := "matrix.c.gcov"
 
-# Main program
-MAIN := your_main_program  # Replace with the actual name of your main program
+# Default target to build main program and tests
+all: $(MAIN) $(TEST)
 
-# Test program
-TEST := unit_tests
+# Main program target
+$(MAIN): $(FUNC_FILES) $(BLDD)/main.o
+	$(CC) $(CFLAGS) $(INCD) $^ -o $@ $(LIBS)
 
-# Source files
-ALL_SRCF := $(shell find $(SRCD) -type f -name '*.c')
-ALL_OBJF := $(patsubst $(SRCD)/%,$(BLDD)/%,$(ALL_SRCF:.c=.o))
-FUNC_FILES := $(filter-out build/main.o, $(ALL_OBJF))
-TEST_SRC := $(shell find $(TSTD) -type f -name '*.c')
-TEST_OBJ := $(patsubst $(TSTD)/%,$(BLDD)/%,$(TEST_SRC:.c=.o))
-AUX_SRC := $(shell find $(AUXD) -type f -name '*.c')
+# Test target
+$(TEST): $(FUNC_FILES) $(TEST_OBJ)
+	$(CC) $(CFLAGS) $(INCD) $^ -o $@ $(TEST_LIB) $(LIBS)
 
-AUX_OBJS := $(patsubst $(AUXD)/%,$(BLDD)/%,$(AUX_SRC:.c=.o))
-AUX_PGMS := $(patsubst $(AUXD)/%,$(BIND)/%,$(AUX_SRC:.c=))
+# Build rule for Criterion library
+$(CRITERION_LIB):
+	curl -o criterion.tar.xz -L https://github.com/Snaipe/Criterion/releases/download/v2.4.1/criterion-2.4.1-linux-x86_64.tar.xz
+	tar xf criterion.tar.xz
+	mv criterion-2.4.1 $(CRITERION_DIR)
 
-# Targets
-all: setup $(BIND)/$(MAIN)
+# Add your existing targets (check, gcov, clean) here...
 
-test: setup $(BIND)/$(TEST)
-	@rm -fr $(TSTD).out
-	@mkdir -p $(TSTD).out
-	@$(BIND)/$(TEST) -j1 --full-stats --verbose --json=test_results.json
+.PHONY: all clean debug setup test
 
-$(BIND)/$(MAIN): $(FUNC_FILES)
-	$(CC) $(CFLAGS) $(INCD) $(FUNC_FILES) -o $@ $(LIBS)
+# Include Criterion library in the build process
+all: $(MAIN) $(TEST) $(CRITERION_LIB)
 
-$(BIND)/$(TEST): $(FUNC_FILES) $(TEST_OBJ)
-	$(CC) $(CFLAGS) $(INCD) $(FUNC_FILES) $(TEST_OBJ) -o $@ $(LIBS)
-
-$(BLDD)/%.o: $(TSTD)/%.c
-	$(CC) $(CFLAGS) $(INCD) -c -o $@ $<
-
-$(BLDD)/%.o: $(SRCD)/%.c 
+# Add the following lines at the end of the Makefile
+$(BLDD)/%.o: $(SRCD)/%.c
 	$(CC) $(CFLAGS) $(INCD) -c -o $@ $<
 
 setup: $(BIND) $(BLDD)
+
 $(BIND):
 	mkdir -p $(BIND)
+
 $(BLDD):
 	mkdir -p $(BLDD)
 
 clean:
-	rm -fr $(BLDD) $(BIND) $(TSTD).out test_results.json
+	rm -fr $(BLDD) $(BIND) $(TSTD).out *.out $(OCLINT_REPORT) $(GCOV_REPORT) $(TEST_RESULTS)
 
-.PHONY: all test clean setup
+debug: CFLAGS += $(DFLAGS) $(PRINT_STATEMENTS)
+debug: all
+
+# Include Criterion library in the clean target
+clean: clean_criterion
+
+clean_criterion:
+	rm -rf $(CRITERION_DIR) criterion.tar.xz
