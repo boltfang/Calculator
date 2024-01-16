@@ -7,13 +7,18 @@ endif
 
 CC := gcc
 SRCD := polynomial
+<<<<<<< HEAD
 TSTD := $(SRCD)/test
+=======
+TSTD := polynomial
+>>>>>>> d0766f5d2e2208f0d613fa5f9f51278a27581643
 BLDD := build
 BIND := bin
 INCD += -I include
 
 ALL_SRCF := $(shell find $(SRCD) -type f -name '*.c')
 ALL_OBJF := $(patsubst $(SRCD)/%,$(BLDD)/%,$(ALL_SRCF:.c=.o))
+<<<<<<< HEAD
 FUNC_FILES := $(filter-out $(BLDD)/test_polynomial.o, $(ALL_OBJF))
 TEST_SRC := $(shell find $(TSTD) -type f -name '*.c')
 TEST_OBJ := $(patsubst $(SRCD)/%,$(BLDD)/%,$(TEST_SRC:.c=.o))
@@ -24,6 +29,14 @@ TEST := $(BIND)/test_polynomial
 CRITERION_DIR := criterion-2.4.1
 CRITERION_LIB := $(CRITERION_DIR)/lib/libcriterion.so
 CRITERION_INC := $(CRITERION_DIR)/include
+=======
+FUNC_FILES := $(filter-out $(BLDD)/test.o, $(ALL_OBJF))
+TEST_SRC := $(shell find $(TSTD) -type f -name '*.c')
+TEST_OBJ := $(patsubst $(TSTD)/%,$(BLDD)/%,$(TEST_SRC:.c=.o))
+
+MAIN := $(BIND)/polynomial
+TEST := $(BIND)/test_polynomial
+>>>>>>> d0766f5d2e2208f0d613fa5f9f51278a27581643
 
 CFLAGS := -Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wundef -pedantic
 GCOV := -fprofile-arcs -ftest-coverage
@@ -53,6 +66,7 @@ $(MAIN): $(FUNC_FILES) $(BLDD)/main.o
 $(TEST): $(FUNC_FILES) $(TEST_OBJ)
 	$(CC) $(CFLAGS) $(INCD) $^ -o $@ $(TEST_LIB) $(LIBS)
 
+<<<<<<< HEAD
 # Build rule for Criterion library
 $(CRITERION_LIB):
 	curl -o criterion.tar.xz -L https://github.com/Snaipe/Criterion/releases/download/v2.4.1/criterion-2.4.1-linux-x86_64.tar.xz
@@ -89,3 +103,8 @@ clean: clean_criterion
 
 clean_criterion:
 	rm -rf $(CRITERION_DIR) criterion.tar.xz
+=======
+# Add your existing targets (check, gcov, clean) here...
+
+.PHONY: all clean debug setup test
+>>>>>>> d0766f5d2e2208f0d613fa5f9f51278a27581643
