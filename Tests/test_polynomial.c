@@ -1,5 +1,5 @@
 #include "test_polynomial.h"
-#include "../../include/polynomial.h"
+#include "../include/polynomial.h"
 
 static char test_log_outfile[100];
 

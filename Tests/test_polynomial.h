@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <assert.h>
 #include "../criterion/criterion.h"
-#include "../../include/polynomial.h"
+#include "../include/polynomial.h"
 
 #define TEST_INPUT_DIR "tests.in"
 #define TEST_OUTPUT_DIR "tests.out"
