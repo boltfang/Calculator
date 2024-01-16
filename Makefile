@@ -12,7 +12,7 @@ BLDD := build
 BIND := bin
 INCD += -I include
 
-ALL_SRCF := $(shell find $(SRCD) -type f -name '*.c')
+ALL_SRCF := $(shell find polynomial -type f -name '*.c')
 ALL_OBJF := $(patsubst $(SRCD)/%,$(BLDD)/%,$(ALL_SRCF:.c=.o))
 FUNC_FILES := $(filter-out $(BLDD)/test_polynomial.o, $(ALL_OBJF))
 TEST_SRC := $(shell find $(TSTD) -type f -name '*.c')
