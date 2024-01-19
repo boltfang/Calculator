@@ -11,6 +11,7 @@
 #define TEST_INPUT_DIR "tests.in"
 #define TEST_OUTPUT_DIR "tests.out"
 #define TEST_TIMEOUT 30
+#define EPSILON 1e-6
 
 int run_using_system(char *test_name);
 void expect_normal_exit(int status);

@@ -42,7 +42,8 @@ bool arePolynomialsEqual(const Polynomial *polynomial_1, const Polynomial *polyn
     }
 
     for (int i = 0; i <= polynomial_1->degree; i++) {
-        if (polynomial_1->terms[i].coefficient != polynomial_2->terms[i].coefficient) {
+        double difference = fabs(polynomial_1->terms[i].coefficient - polynomial_2->terms[i].coefficient);
+        if (difference > EPSILON) {
             return false;
         }
     }
@@ -54,23 +55,23 @@ Test(base_suite, add_same_polynomial_1, .description="Adds two polynomials that 
     Polynomial addend_1, addend_2, actual_sum, expected_sum;
 
     initializePolynomial(&addend_1, 3);
-    setCoefficient(&addend_1, 3, 3);
+    setCoefficient(&addend_1, 3, 3.2);
     setCoefficient(&addend_1, 2, -12.3);
     setCoefficient(&addend_1, 1, 3.45);
-    setCoefficient(&addend_1, 0, 1.2);
+    setCoefficient(&addend_1, 0, 3.123);
 
     initializePolynomial(&addend_2, 3);
-    setCoefficient(&addend_2, 3, 4.5);
+    setCoefficient(&addend_2, 3, 4.73);
     setCoefficient(&addend_2, 2, 0.3);
     setCoefficient(&addend_2, 1, -3.45);
-    setCoefficient(&addend_2, 0, 2.63);
+    setCoefficient(&addend_2, 0, 0.456);
 
     actual_sum = addPolynomials(&addend_1, &addend_2);
     initializePolynomial(&expected_sum, 3);
-    setCoefficient(&expected_sum, 3, 7.5);
+    setCoefficient(&expected_sum, 3, 7.93);
     setCoefficient(&expected_sum, 2, -12);
     setCoefficient(&expected_sum, 1, 0);
-    setCoefficient(&expected_sum, 0, 3.83);
+    setCoefficient(&expected_sum, 0, 3.579);
 
     cr_assert(arePolynomialsEqual(&actual_sum, &expected_sum), "Polynomials are not equal.");
     free(addend_1.terms);
@@ -78,3 +79,4 @@ Test(base_suite, add_same_polynomial_1, .description="Adds two polynomials that 
     free(actual_sum.terms);
     free(expected_sum.terms);
 }
+
