@@ -1,4 +1,4 @@
-#include "../include/polynomial.h"
+#include "polynomial.h"
 
 void initializePolynomial(Polynomial *polynomial, int degree) {
     if (degree < 0) {
