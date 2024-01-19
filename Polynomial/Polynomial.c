@@ -38,11 +38,10 @@ Polynomial addPolynomials(const Polynomial *addend_1, const Polynomial *addend_2
     Polynomial sum;
     int maxDegree = (addend_1->degree > addend_2->degree) ? addend_1->degree : addend_2->degree;
     initializePolynomial(&sum, maxDegree);
-
+    
     for (int i = 0; i <= maxDegree; i++) {
         double coefficient_1 = (i <= addend_1->degree) ? addend_1->terms[i].coefficient : 0.0;
         double coefficient_2 = (i <= addend_2->degree) ? addend_2->terms[i].coefficient : 0.0;
-        printf("%f\n", coefficient_1 + coefficient_2);
         setCoefficient(&sum, i, coefficient_1 + coefficient_2);
     }
 

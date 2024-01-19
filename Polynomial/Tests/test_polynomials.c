@@ -80,3 +80,27 @@ Test(base_suite, add_same_polynomial_1, .description="Adds two polynomials that 
     free(expected_sum.terms);
 }
 
+Test(base_suite, add_same_polynomial_degree_1, .description="Adds two polynomials that have the same number of degree but different number of terms.") {
+    Polynomial addend_1, addend_2, actual_sum, expected_sum;
+
+    initializePolynomial(&addend_1, 2);
+    setCoefficient(&addend_1, 2, -18342.124);
+    setCoefficient(&addend_1, 1, 1.23456789);
+    setCoefficient(&addend_1, 0, 0.000001);
+
+    initializePolynomial(&addend_2, 2);
+    setCoefficient(&addend_2, 2, 0.01);
+    setCoefficient(&addend_2, 0, 10000);
+
+    actual_sum = addPolynomials(&addend_1, &addend_2);
+    initializePolynomial(&expected_sum, 2);
+    setCoefficient(&expected_sum, 2, -18342.114);
+    setCoefficient(&expected_sum, 1, 1.23456789);
+    setCoefficient(&expected_sum, 0, 10000.000001);
+
+    cr_assert(arePolynomialsEqual(&actual_sum, &expected_sum), "Polynomials are not equal.");
+    free(addend_1.terms);
+    free(addend_2.terms);
+    free(actual_sum.terms);
+    free(expected_sum.terms);
+}
