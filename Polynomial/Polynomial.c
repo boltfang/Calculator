@@ -27,9 +27,17 @@ void setCoefficient(Polynomial *polynomial, int exponent, double coefficient) {
     polynomial->terms[exponent].coefficient = coefficient;
 }
 
+void updateCoefficient(Polynomial *polynomial, int exponent, double coefficient) {
+    if (exponent < 0 || exponent > polynomial->degree) {
+        fprintf(stderr, "ERROR IN UPDATING COEFFICIENT: INVALID EXPONENT");
+        exit(EXIT_FAILURE);
+    }
+    polynomial->terms[exponent].coefficient += coefficient;
+}
+
 void copyPolynomial(const Polynomial *source, Polynomial *destination) {
     initializePolynomial(destination, source->degree);
-    for (int i = 0; i < source->degree; i++) {
+    for (int i = 0; i <= source->degree; i++) {
         setCoefficient(destination, i, source->terms[i].coefficient);
     }
 }
@@ -42,7 +50,7 @@ Polynomial addPolynomials(const Polynomial *addend_1, const Polynomial *addend_2
     for (int i = 0; i <= maxDegree; i++) {
         double coefficient_1 = (i <= addend_1->degree) ? addend_1->terms[i].coefficient : 0.0;
         double coefficient_2 = (i <= addend_2->degree) ? addend_2->terms[i].coefficient : 0.0;
-        setCoefficient(&sum, i, coefficient_1 + coefficient_2);
+        updateCoefficient(&sum, i, coefficient_1 + coefficient_2);
     }
 
     return sum;
@@ -56,7 +64,7 @@ Polynomial subtractPolynomials(const Polynomial *minuend, const Polynomial *subt
     for (int i = 0; i <= maxDegree; i++) {
         double coefficient_1 = (i <= minuend->degree) ? minuend->terms[i].coefficient : 0.0;
         double coefficient_2 = (i <= subtrahend->degree) ? subtrahend->terms[i].coefficient : 0.0;
-        setCoefficient(&difference, i, coefficient_1 - coefficient_2);
+        updateCoefficient(&difference, i, coefficient_1 - coefficient_2);
     }
 
     return difference;
@@ -70,8 +78,8 @@ Polynomial multiplyPolynomials(const Polynomial *multiplicand, const Polynomial 
     for (int i = 0; i <= multiplicand->degree; i++) {
         for (int j = 0; j <= multiplier->degree; j++) {
             double coefficient_1 = multiplicand->terms[i].coefficient;
-            double coefficient_2 = multiplicand->terms[j].coefficient;
-            setCoefficient(&product, i + j, coefficient_1 * coefficient_2);
+            double coefficient_2 = multiplier->terms[j].coefficient;
+            updateCoefficient(&product, i + j, coefficient_1 * coefficient_2);
         }
     }
 
@@ -89,12 +97,12 @@ Polynomial *dividePolynomials(const Polynomial *dividend, const Polynomial *divi
     copyPolynomial(dividend, &remainder);
 
     for (int i = dividend->degree; i >= divisor->degree; i--) {
-        double coefficient_1 = divisor->terms[divisor->degree].coefficient;
-        double coefficient_2 = remainder.terms[i].coefficient;
-        setCoefficient(&quotient, i - divisor->degree, coefficient_1 / coefficient_2);
+        double coefficient_1 = remainder.terms[i].coefficient;
+        double coefficient_2 = divisor->terms[divisor->degree].coefficient;
+        updateCoefficient(&quotient, i - divisor->degree, coefficient_1 / coefficient_2);
 
         for (int j = 0; j <= divisor->degree; j++) {
-            remainder.terms[i - j].coefficient -= coefficient_2 * divisor->terms[j].coefficient;
+            updateCoefficient(&remainder, i - j, -(coefficient_1 / coefficient_2) * divisor->terms[divisor->degree - j].coefficient);
         }
     }
 
